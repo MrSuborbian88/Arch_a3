@@ -1,3 +1,4 @@
 %ECHO OFF
+SET CLASSPATH=bin
 START "EVENT MANAGER REGISTRY" /MIN /NORMAL rmiregistry
-START "EVENT MANAGER" /MIN /NORMAL java bin/edu/cmu/a3/MessageManager
+START "EVENT MANAGER" /MIN /NORMAL java edu.cmu.a3.MessageManager
