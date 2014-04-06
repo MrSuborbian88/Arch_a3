@@ -18,7 +18,7 @@ public abstract class ADevice {
 	public static final Integer [] special_ids = {MessageCodes.PING,MessageCodes.PONG};
 	
 	//Messages with these message ids will be sent to handleMessage()
-	public Integer [] relevant_ids = {};
+	protected Integer [] relevant_ids;// = {};
 	
 	private String id;
 	private String type;
@@ -27,18 +27,20 @@ public abstract class ADevice {
 
 	private boolean running;
 
-	public ADevice(String id, String type) throws Exception {
+	public ADevice(String id, String type, Integer [] relevant_ids) throws Exception {
 		this.msgManager = new MessageManagerInterface();
 		setId(id);		
 		setType(type);
 		startListening();
+		this.relevant_ids = relevant_ids;
 	}
 
-	public ADevice(String id, String type, String serverIp) throws Exception {
+	public ADevice(String id, String type, Integer [] relevant_ids, String serverIp) throws Exception {
 		this.msgManager = new MessageManagerInterface(serverIp);
 		setId(id);
 		setType(type);
 		startListening();
+		this.relevant_ids = relevant_ids;
 	}
 	public String getType() {
 		return type;
@@ -102,6 +104,7 @@ public abstract class ADevice {
 							if(msg.GetMessageId() == MessageCodes.PING)
 								sendMessage(MessageCodes.PONG);
 							else{
+								if(relevant_ids != null)
 								for(int msgid : relevant_ids) {
 									if(msgid == msg.GetMessageId())
 									{

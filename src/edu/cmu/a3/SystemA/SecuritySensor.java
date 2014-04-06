@@ -11,13 +11,13 @@ public class SecuritySensor extends ADevice {
 	
 	public static final String KEY_STATUS = "status";
 	
-	public SecuritySensor(String id, String type) throws Exception {
-		super(id, type);
+	public SecuritySensor(String id, String type, Integer [] msgids) throws Exception {
+		super(id, type,msgids);
 	}
 
-	public SecuritySensor(String id, String type, String serverIp)
+	public SecuritySensor(String id, String type,Integer [] msgids, String serverIp)
 			throws Exception {
-		super(id, type, serverIp);
+		super(id, type,msgids, serverIp);
 	}
 
 	@Override
