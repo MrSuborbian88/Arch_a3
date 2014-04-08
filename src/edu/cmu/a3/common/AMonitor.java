@@ -13,7 +13,7 @@ public abstract class AMonitor extends ADevice {
 	private Thread sender;
 
 	private boolean running;
-	
+
 	public static final Long TIMEOUT = 60000L; //in ms
 
 
@@ -67,19 +67,24 @@ public abstract class AMonitor extends ADevice {
 	}
 
 	protected void checkDevices() {
-		for(Device d : connectedDevices.values()) {
-			if(Math.abs(d.timestamp - System.currentTimeMillis()) > TIMEOUT
-					&& connectedDevices.containsKey(d.name))
-				connectedDevices.remove(d.name);
+		String [] keyset = connectedDevices.keySet().toArray(new String[connectedDevices.size()]);
+		for( String key : keyset) {
+			if(connectedDevices.containsKey(key))
+			{
+				Device d = connectedDevices.get(key);
+				if(Math.abs(d.timestamp - System.currentTimeMillis()) > TIMEOUT ) {
+					connectedDevices.remove(key);
+				}
+			}
 		}
 	}
-	
+
 	@Override
 	protected void handlePong(Message msg) {
 		if(msg == null)
 			return;
 		Map<String,String> values = getMapFromString(msg.GetMessage());
-		
+
 		if(values != null && values.containsKey(KEY_ID) &&
 				values.containsKey(KEY_NAME) &&
 				values.containsKey(KEY_DESCRIPTION)

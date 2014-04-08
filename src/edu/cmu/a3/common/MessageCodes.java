@@ -15,6 +15,6 @@ public interface MessageCodes {
 	
 	
 	public static final int PING = 301;
-	public static final int PONG = 301;
+	public static final int PONG = 302;
 	
 }
