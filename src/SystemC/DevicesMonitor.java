@@ -44,7 +44,7 @@ public class DevicesMonitor extends AMonitor {
 			if(args.length > 0)
 				name = args[0];
 			if(name.equals("")) {
-				name = edu.cmu.a3.common.Util.createRandomId("DoorSensor_",2);
+				name = edu.cmu.a3.common.Util.createRandomId("DevicesMonitor_",2);
 			}
 			DevicesMonitor ds = new DevicesMonitor(name);
 			

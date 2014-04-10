@@ -3,9 +3,7 @@ package edu.cmu.a3.SystemB;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import edu.cmu.a3.MessagePackage.Message;
 import edu.cmu.a3.common.ADevice;
@@ -22,9 +20,6 @@ public class FireAlarmController extends ADevice {
 	public static final String KEY_SENSORIDS = "sensorids";
 
 	protected static final Integer [] msg_ids = {MessageCodes.FIRE_SENSOR_ALARM};
-
-	boolean armed = false;
-
 
 	private Map<String,Device> sensors;
 
@@ -46,18 +41,29 @@ public class FireAlarmController extends ADevice {
 			return;
 		Map<String,String> values = getMapFromString(msg.GetMessage());
 
-		//arm/clear the system
+		//Received fire alarm message
 		if(msg.GetMessageId() == MessageCodes.FIRE_SENSOR_ALARM) {
-                    
-                    /*if fire is sensed from sensor, add message to security console to indicate it*/
-		}	
-	}
-	private Set<String> getDeviceTypes() {
-		Set<String> types = new HashSet<String>();
-		for(Device d : sensors.values()) {
-			types.add(d.type);
+
+			if(values.containsKey(ADevice.KEY_ID) && values.containsKey(ADevice.KEY_TYPE)
+					&& values.containsKey(FireSensor
+							.KEY_STATUS))
+			{
+				Device d = new Device(
+						values.get(ADevice.KEY_ID),
+						values.get(ADevice.KEY_TYPE),
+						values.get(FireSensor.KEY_STATUS).equals(String.valueOf(FireSensor.VALUE_ARMED)) ?
+								true : false
+						);
+				sensors.put(values.get(ADevice.KEY_ID), d);
+				try {
+					messageForAlarms(d.type);
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		return types;
 	}
 	private void messageForAlarms(String type) throws NullPointerException, Exception {
 		if(type == null)
@@ -81,7 +87,7 @@ public class FireAlarmController extends ADevice {
 			values.put(KEY_STATUS, VALUE_ARMED);
 			values.put(KEY_SENSORIDS,
 					Arrays.toString(armed_ids.toArray(new String[armed_ids.size()])));
-			sendMessage(MessageCodes.SYSTEM_ALARM,values);
+			sendMessage(MessageCodes.FIRE_SYSTEM_ALARM,values);
 			System.out.println("Active "+type+" :");
 			for(String id : armed_ids) {
 				System.out.println(id);
@@ -91,7 +97,7 @@ public class FireAlarmController extends ADevice {
 			values.put(KEY_STATUS, VALUE_CLEARED);
 			values.put(KEY_SENSORIDS,
 					Arrays.toString(clear_ids.toArray(new String[armed_ids.size()])));
-			sendMessage(MessageCodes.SYSTEM_ALARM,values);
+			sendMessage(MessageCodes.FIRE_SYSTEM_ALARM,values);
 			System.out.println("All "+type+" are inactive.");
 		}
 
@@ -119,10 +125,13 @@ public class FireAlarmController extends ADevice {
 			if(args.length > 0)
 				name = args[0];
 			if(name.equals("")) {
-				name = edu.cmu.a3.common.Util.createRandomId("FireSensor_",2);
+				name = edu.cmu.a3.common.Util.createRandomId("FireAlarmController_",2);
 			}
 
 			FireAlarmController ws = new FireAlarmController(name);
+
+			System.out.println(name);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
