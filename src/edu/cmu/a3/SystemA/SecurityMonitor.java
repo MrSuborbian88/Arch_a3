@@ -1,6 +1,5 @@
 package edu.cmu.a3.SystemA;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,9 +10,9 @@ import edu.cmu.a3.common.MessageCodes;
 public class SecurityMonitor extends AMonitor {
 	
 
-	public static final String VALUE_TYPE = "WindowSensor";
+	public static final String VALUE_TYPE = "SecurityMonitor";
 
-	public static final String VALUE_DESCRIPTION = "Window Sensor Description";
+	public static final String VALUE_DESCRIPTION = "Security Monitor Description";
 	private boolean armed;
 	
 	public SecurityMonitor(String id) throws Exception {
@@ -84,6 +83,11 @@ public class SecurityMonitor extends AMonitor {
 
 	}
 
+	@Override
+	protected void deviceChange() {
+		// No action needed		
+	}
+	
 	public static void main(String[] args) {
 		try {
 			String name = "";
@@ -112,6 +116,7 @@ public class SecurityMonitor extends AMonitor {
 			e.printStackTrace();
 		}
 	}
+	
 }
 
 

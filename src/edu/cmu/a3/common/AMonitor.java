@@ -17,9 +17,9 @@ public abstract class AMonitor extends ADevice {
 	public static final Long TIMEOUT = 60000L; //in ms
 
 
-	private Map<String,Device> connectedDevices;
+	protected Map<String,Device> connectedDevices;
 
-	private class Device {
+	protected class Device {
 		public String name;
 		public String type;
 		public String description;
@@ -66,6 +66,10 @@ public abstract class AMonitor extends ADevice {
 		sender.start();
 	}
 
+	/**
+	 * When a device is added or removed, this method is called.
+	 */
+	protected abstract void deviceChange();
 	protected void checkDevices() {
 		String [] keyset = connectedDevices.keySet().toArray(new String[connectedDevices.size()]);
 		for( String key : keyset) {
@@ -74,6 +78,7 @@ public abstract class AMonitor extends ADevice {
 				Device d = connectedDevices.get(key);
 				if(Math.abs(d.timestamp - System.currentTimeMillis()) > TIMEOUT ) {
 					connectedDevices.remove(key);
+					deviceChange();	
 				}
 			}
 		}
@@ -93,8 +98,10 @@ public abstract class AMonitor extends ADevice {
 					values.get(KEY_NAME),
 					values.get(KEY_DESCRIPTION),
 					System.currentTimeMillis());
-
+			boolean newDevice = !connectedDevices.containsKey(values.get(KEY_ID));
 			connectedDevices.put(values.get(KEY_ID), d);
+			if(newDevice)
+				deviceChange();
 		}
 //		System.out.println("Connected Devices " + connectedDevices.size());
 
