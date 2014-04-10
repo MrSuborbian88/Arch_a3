@@ -13,7 +13,7 @@ public class FireSensor extends ADevice {
 	public static final String VALUE_ARMED = "armed";
 	public static final String VALUE_CLEARED = "clear";
 	
-	public static final String VALUE_TYPE = "Fire";
+	public static final String VALUE_TYPE = "FireSensor";
 	public static final String VALUE_DESCRIPTION = "Fire Sensor Description";
 
 

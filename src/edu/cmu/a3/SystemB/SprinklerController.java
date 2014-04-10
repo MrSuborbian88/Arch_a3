@@ -20,7 +20,7 @@ public class SprinklerController extends ADevice {
 
 	public static final String KEY_STATUS = "status";
 	public static final String KEY_SENSORIDS = "sensorids";
-	
+
 	public static final String KEY_COUNTDOWN_RESPONSE = "response";
 	public static final String KEY_COUNTDOWN_ID = "response";
 	public static final String KEY_COUNTDOWN_TIME = "secondsleft";
@@ -32,8 +32,8 @@ public class SprinklerController extends ADevice {
 		MessageCodes.COUNTDOWN_RESPONSE,
 		MessageCodes.SET_SPRINKLER};
 
-	boolean activated = false;
-	boolean sprinkling = false;
+	boolean activated = false; //if any sensors are active
+	boolean sprinkling = false; //state of the sprinklers
 
 
 	private Map<String,CountdownThread> countdownThreads;
@@ -61,10 +61,20 @@ public class SprinklerController extends ADevice {
 			/*TODO - if fire system alarm determined to be on, turn sprinklers on*/
 			if(values.containsKey(FireAlarmController.KEY_STATUS)) {
 				if(values.get(FireAlarmController.KEY_STATUS).equals(FireAlarmController.VALUE_ARMED)) {
-					startCountdown();
+					startCountdown(values.get(KEY_ID));
+					activated = true;
+					System.out.println("Fire detected by " + values.get(KEY_ID));
 				}
 				else {
-					stopSprinklers();
+					//Stop the countdown if the sensor has cleared
+					String sensorid = values.get(KEY_ID);
+					if(countdownThreads.containsKey(sensorid))
+					{
+						this.stopCountdown(countdownThreads.get(sensorid).id);
+					}
+					if(countdownThreads.size() == 0 )
+						activated = false;
+					System.out.println("Fire cleared by " + values.get(KEY_ID));
 				}
 			}
 		}
@@ -73,52 +83,73 @@ public class SprinklerController extends ADevice {
 			/*TODO - if there is no input from user within 10 seconds, turn sprinklers on*/
 			if(values.containsKey(KEY_COUNTDOWN_RESPONSE) && values.containsKey(KEY_COUNTDOWN_ID)) {
 				if(values.get(KEY_COUNTDOWN_RESPONSE).equals(VALUE_COUNTDOWN_YES)) {
+					System.out.println("Received a response to the countdown to turn sprinklers on" 
+							+ values.get(KEY_COUNTDOWN_ID));
 					this.stopCountdown(values.get(KEY_COUNTDOWN_ID));
+					this.startSprinklers();
 				}
 				else if(values.get(KEY_COUNTDOWN_RESPONSE).equals(VALUE_COUNTDOWN_NO)) {
 					//Stop countdown and start sprinklers
+					System.out.println("Received a response to the countdown to not turn sprinklers on" 
+							+ values.get(KEY_COUNTDOWN_ID));
 					this.stopCountdown(values.get(KEY_COUNTDOWN_ID));
-					this.startSprinklers();
 				}
 			}
-			
-			
 		}
 		else if(msg.GetMessageId() == MessageCodes.SET_SPRINKLER) {
 			if(values.containsKey(KEY_STATUS)) {
-			/*TODO - set sprinkler to TRUE when sprinklers already on*/
-				if(values.get(KEY_STATUS).equals(VALUE_ON) && !sprinkling)
-					this.startSprinklers();
-				else if(values.get(KEY_STATUS).equals(VALUE_OFF) && sprinkling)
-					this.stopSprinklers();
-			
+				/*TODO - set sprinkler to TRUE when sprinklers already on*/
+				if(values.get(KEY_STATUS).equals(VALUE_ON))
+				{
+					if(!sprinkling) {
+						System.out.println("Turning on sprinklers!");
+						this.startSprinklers();
+					}
+					else
+					{
+						System.out.println("Sprinklers are already on!");
+					}
+				}
+				if(values.get(KEY_STATUS).equals(VALUE_OFF)) 
+				{
+					if(sprinkling) {
+						System.out.println("Turning off sprinklers!");
+						this.stopSprinklers();
+					}
+					else
+					{
+						System.out.println("Sprinklers are already off!");
+					}
+				}
+
+
 			}
 
 		}
 	}
 	private void stopSprinklers() {
 		sprinkling = false;
-		this.sendStopSprinklers();
 	}
 
 	private void startSprinklers() {
-		activated = true;
-		startCountdown();
+		sprinkling = true;
 	}
 
-	private void startCountdown() {
+	private void startCountdown(String sensorId) {
 		CountdownThread countdownThread = new CountdownThread();
+		countdownThreads.put(sensorId, countdownThread);
 		countdownThread.start();
-		countdownThreads.put(countdownThread.id, countdownThread);
 		
+
 	}
-	private void stopCountdown(String id) {
-		if(countdownThreads.containsKey(id)) {
-			countdownThreads.get(id).finish();
-			countdownThreads.remove(id);
+	private void stopCountdown(String countdownId) {
+		for(String key : countdownThreads.keySet()) {
+			if(countdownThreads.get(key).id.equals(countdownId)) {
+				countdownThreads.get(key).finish();
+				countdownThreads.remove(key);
+				break;
+			}
 		}
-		activated = false;
-		
 	}
 	private class CountdownThread extends Thread{
 		public String id;
@@ -146,27 +177,23 @@ public class SprinklerController extends ADevice {
 			active = false;
 		}
 	}
-	private void sendStopSprinklers() {
-		HashMap<String,String> values = new HashMap<String,String>();
-		values.put(KEY_STATUS, VALUE_CLEARED);
-		try {
-			sendMessage(MessageCodes.SET_SPRINKLER,values);
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
 	public void sendCountdownMessage(String id, int time) {
 		HashMap<String,String> values = new HashMap<String,String>();
 		values.put(KEY_COUNTDOWN_ID, id);
 		values.put(KEY_COUNTDOWN_TIME, String.valueOf(time));
+		try {
+			sendMessage(MessageCodes.COUNTDOWN,values);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("Sending countdown " + id + " with " + time + " seconds");
 	}
+
 	private void sendStartSprinklers() {
 		HashMap<String,String> values = new HashMap<String,String>();
-		values.put(KEY_STATUS, VALUE_ARMED);
+		values.put(KEY_STATUS, VALUE_ON);
 		try {
 			sendMessage(MessageCodes.SET_SPRINKLER,values);
 		} catch (NullPointerException e) {
@@ -174,13 +201,36 @@ public class SprinklerController extends ADevice {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		sendSprinklerStatus();
 	}
 
+	private void sendStopSprinklers() {
+		HashMap<String,String> values = new HashMap<String,String>();
+		values.put(KEY_STATUS, VALUE_OFF);
+		try {
+			sendMessage(MessageCodes.SET_SPRINKLER,values);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		sendSprinklerStatus();
+	}
+	private void sendSprinklerStatus() {
+		HashMap<String,String> values = new HashMap<String,String>();
+		values.put(KEY_STATUS, this.sprinkling ? VALUE_ON : VALUE_OFF);
+		try {
+			sendMessage(MessageCodes.SPRINKLER_STATUS,values);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	@Override
 	protected void handlePong(Message msg) {
 		//No action needed
 	}
-
 
 	public static void main(String [] args) {
 		try {
@@ -188,9 +238,8 @@ public class SprinklerController extends ADevice {
 			if(args.length > 0)
 				name = args[0];
 			if(name.equals("")) {
-				name = edu.cmu.a3.common.Util.createRandomId("MotionSensor_",2);
+				name = edu.cmu.a3.common.Util.createRandomId("SprinklerController_",2);
 			}
-
 			SprinklerController ws = new SprinklerController(name);
 		} catch (Exception e) {
 			e.printStackTrace();
