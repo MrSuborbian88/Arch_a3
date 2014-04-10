@@ -45,16 +45,18 @@ public class IntrusionAlarmControl extends ADevice {
 		if(msg == null)
 			return;
 		Map<String,String> values = getMapFromString(msg.GetMessage());
-		System.out.println(Arrays.toString(values.values().toArray()));
+//		System.out.println(Arrays.toString(values.values().toArray()));
 
 		//arm/clear the system
 		if(msg.GetMessageId() == MessageCodes.ARM) {
 			if(values.containsKey(SecurityMonitor.KEY_ARM)) {
 				if(values.get(SecurityMonitor.KEY_ARM).equals(String.valueOf(true))) {
 					armed = true;
+					System.out.println("System is now armed.");
 				} 
 				else {
 					armed = false;
+					System.out.println("System is now disarmed.");
 				}
 				if(this.armed)
 				{
@@ -120,20 +122,27 @@ public class IntrusionAlarmControl extends ADevice {
 		}
 
 		HashMap<String,String> values = new HashMap<String,String>();
+		values.put(KEY_TYPE, type);
 		if(armed_ids.size() > 0)
 		{
 			values.put(KEY_STATUS, VALUE_ARMED);
 			values.put(KEY_SENSORIDS,
 					Arrays.toString(armed_ids.toArray(new String[armed_ids.size()])));
 			sendMessage(MessageCodes.SYSTEM_ALARM,values);
-//			System.out.println("Alarms");
+			System.out.println("Active "+type+" :");
+			for(String id : armed_ids) {
+				System.out.println(id);
+			}
 
 		} else if (clear_ids.size() > 0) {
 			values.put(KEY_STATUS, VALUE_CLEARED);
 			values.put(KEY_SENSORIDS,
 					Arrays.toString(clear_ids.toArray(new String[armed_ids.size()])));
 			sendMessage(MessageCodes.SYSTEM_ALARM,values);
-//			System.out.println("No Alarms");
+			System.out.println("All "+type+" are inactive.");
+//			for(String id : clear_ids) {
+//				System.out.println(id);
+//			}
 		}
 
 	}
@@ -154,19 +163,16 @@ public class IntrusionAlarmControl extends ADevice {
 			this.state=state;
 		}
 	}
-	public void sendSystemAlarmMessage() {
-		//get all the stateful stuff and send it
-	}
 	public static void main(String [] args) {
 		try {
-			IntrusionAlarmControl ws = new IntrusionAlarmControl("2");
-			boolean arm = true;
-			//			while(true) {
-			//				ws.sendArmMessage(arm);
-			//				System.out.println("MessageSent");
-			//				arm = !arm;
-			//				Thread.sleep(10000);
-			//			}
+			String name = "";
+			if(args.length > 0)
+				name = args[0];
+			if(name.equals("")) {
+				name = edu.cmu.a3.common.Util.createRandomId("MotionSensor_",2);
+			}
+
+			IntrusionAlarmControl ws = new IntrusionAlarmControl(name);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

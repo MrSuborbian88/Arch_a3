@@ -1,3 +1,4 @@
+
 package edu.cmu.a3.SystemA;
 
 public class DoorSensor extends SecuritySensor {
@@ -12,27 +13,37 @@ public class DoorSensor extends SecuritySensor {
 
 	public DoorSensor(String id, String type, String serverIp)
 			throws Exception {
-		super(id, VALUE_TYPE,VALUE_DESCRIPTION,new Integer [] {},serverIp);	}
-
-	public static void main(String [] args) {
-		try {
-			DoorSensor ds1 = new DoorSensor("ds1");
-			DoorSensor ds2 = new DoorSensor("ds2");
-			DoorSensor ds3 = new DoorSensor("ds3");
-
-			boolean arm = true;
-			while(true) {
-				ds1.sendArmMessage(arm);
-				ds2.sendArmMessage(arm);
-				ds3.sendArmMessage(!arm);
-//				System.out.println("MessageSent");
-				arm = !arm;
-				Thread.sleep(10000);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		super(id, VALUE_TYPE,VALUE_DESCRIPTION,new Integer [] {},serverIp);	
 	}
 
-	
+	public static void main(String [] args) {try {
+		String name = "";
+		if(args.length > 0)
+			name = args[0];
+		if(name.equals("")) {
+			name = edu.cmu.a3.common.Util.createRandomId("DoorSensor_",2);
+		}
+		DoorSensor ds = new DoorSensor(name);
+
+		boolean arm = false;
+		System.out.println(ds.getId());
+		while(true) {
+			if(arm)
+				System.out.println("Press Enter to Toggle Sensor Off:");
+			else
+				System.out.println("Press Enter to Toggle Sensor On:");
+			edu.cmu.a3.common.Util.getNextEnter();
+			arm = !arm;
+			ds.sendArmMessage(arm);
+			if(arm)
+				System.out.println("Sensor is on!");
+			else
+				System.out.println("Sensor is off!");
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+
+
 }

@@ -16,18 +16,35 @@ public class WindowSensor extends SecuritySensor {
 	}
 	
 	public static void main(String [] args) {
+
 		try {
-			WindowSensor ws = new WindowSensor("1");
-			boolean arm = true;
+			String name = "";
+			if(args.length > 0)
+				name = args[0];
+			if(name.equals("")) {
+				name = edu.cmu.a3.common.Util.createRandomId("WindowSensor_",2);
+			}
+			WindowSensor ds = new WindowSensor(name);
+
+			boolean arm = false;
+			System.out.println(ds.getId());
 			while(true) {
-				ws.sendArmMessage(arm);
-//				System.out.println("MessageSent");
+				if(arm)
+					System.out.println("Press Enter to Toggle Sensor Off:");
+				else
+					System.out.println("Press Enter to Toggle Sensor On:");
+				edu.cmu.a3.common.Util.getNextEnter();
 				arm = !arm;
-				Thread.sleep(10000);
+				ds.sendArmMessage(arm);
+				if(arm)
+					System.out.println("Sensor is on!");
+				else
+					System.out.println("Sensor is off!");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	
 	}
 
 }

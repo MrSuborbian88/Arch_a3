@@ -84,10 +84,8 @@ public abstract class ADevice {
 		try {
 			sendMessage(MessageCodes.PONG,values);
 		} catch (NullPointerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -14,19 +14,34 @@ public class MotionSensor extends SecuritySensor {
 			throws Exception {
 		super(id, VALUE_TYPE,VALUE_DESCRIPTION,new Integer [] {},serverIp);	}
 	
-	public static void main(String [] args) {
-		try {
-			MotionSensor ms = new MotionSensor("ms1");
-			boolean arm = true;
-			while(true) {
-				ms.sendArmMessage(arm);
-//				System.out.println("MessageSent");
-				arm = !arm;
-				Thread.sleep(10000);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public static void main(String [] args) {try {
+		String name = "";
+		if(args.length > 0)
+			name = args[0];
+		if(name.equals("")) {
+			name = edu.cmu.a3.common.Util.createRandomId("MotionSensor_",2);
 		}
+		MotionSensor ds = new MotionSensor(name);
+
+		boolean arm = false;
+		System.out.println(ds.getId());
+		while(true) {
+			if(arm)
+				System.out.println("Press Enter to Toggle Sensor Off:");
+			else
+				System.out.println("Press Enter to Toggle Sensor On:");
+			edu.cmu.a3.common.Util.getNextEnter();
+			arm = !arm;
+			ds.sendArmMessage(arm);
+			if(arm)
+				System.out.println("Sensor is on!");
+			else
+				System.out.println("Sensor is off!");
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+
 	}
 
 }
