@@ -60,7 +60,7 @@ public class IntrusionAlarmControl extends ADevice {
 				}
 				
 				// START CFP FIX FOR ISSUE 6
-				/* if(this.armed)
+				/if(this.armed)
 				{
 					for(String type : this.getDeviceTypes())
 					{
@@ -72,7 +72,7 @@ public class IntrusionAlarmControl extends ADevice {
 							e.printStackTrace();
 						}						
 					}
-				} */
+				} 
 				// END CFP FIX FOR ISSUE 6
 				
 			}
