@@ -90,7 +90,6 @@ public class IntrusionAlarmControl extends ADevice {
 								true : false
 						);
 				sensors.put(values.get(ADevice.KEY_ID), d);
-				if(this.armed)
 					try {
 						messageForAlarms(d.type);
 					} catch (NullPointerException e) {
@@ -131,7 +130,8 @@ public class IntrusionAlarmControl extends ADevice {
 			values.put(KEY_STATUS, VALUE_ARMED);
 			values.put(KEY_SENSORIDS,
 					Arrays.toString(armed_ids.toArray(new String[armed_ids.size()])));
-			sendMessage(MessageCodes.SYSTEM_ALARM,values);
+			if(this.armed)
+				sendMessage(MessageCodes.SYSTEM_ALARM,values);
 			System.out.println("Active "+type+" :");
 			for(String id : armed_ids) {
 				System.out.println(id);
@@ -141,7 +141,8 @@ public class IntrusionAlarmControl extends ADevice {
 			values.put(KEY_STATUS, VALUE_CLEARED);
 			values.put(KEY_SENSORIDS,
 					Arrays.toString(clear_ids.toArray(new String[clear_ids.size()])));
-			sendMessage(MessageCodes.SYSTEM_ALARM,values);
+			if(this.armed)
+				sendMessage(MessageCodes.SYSTEM_ALARM,values);
 			System.out.println("All "+type+" are inactive.");
 			//All clear, remove from list
 			if(sensors.containsKey(type))
