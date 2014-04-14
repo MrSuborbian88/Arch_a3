@@ -3,17 +3,17 @@ package SystemC;
 import edu.cmu.a3.MessagePackage.Message;
 import edu.cmu.a3.common.AMonitor;
 
-public class DevicesMonitor extends AMonitor {
+public class ServiceMaintenanceConsole extends AMonitor {
 	
 
-	public static final String VALUE_TYPE = "DevicesMonitor";
+	public static final String VALUE_TYPE = "ServiceMaintenanceConsole";
 
-	public static final String VALUE_DESCRIPTION = "Device Monitor Description";
+	public static final String VALUE_DESCRIPTION = "Service Maintenance Console";
 	
-	public DevicesMonitor(String id) throws Exception {
+	public ServiceMaintenanceConsole(String id) throws Exception {
 		super(id, VALUE_TYPE, VALUE_DESCRIPTION, new Integer[] {});
 	}
-	public DevicesMonitor(String id,String serverIp) throws Exception {
+	public ServiceMaintenanceConsole(String id,String serverIp) throws Exception {
 		super(id, VALUE_TYPE, VALUE_DESCRIPTION, new Integer[] {}, serverIp);
 	}
 
@@ -44,9 +44,9 @@ public class DevicesMonitor extends AMonitor {
 			if(args.length > 0)
 				name = args[0];
 			if(name.equals("")) {
-				name = edu.cmu.a3.common.Util.createRandomId("DevicesMonitor_",2);
+				name = edu.cmu.a3.common.Util.createRandomId("ServiceMaintenanceConsole_",2);
 			}
-			DevicesMonitor ds = new DevicesMonitor(name);
+			ServiceMaintenanceConsole smc = new ServiceMaintenanceConsole(name);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
