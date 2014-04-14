@@ -56,13 +56,13 @@ public class SecurityMonitor extends AMonitor {
 				if(values.get(IntrusionAlarmControl.KEY_STATUS).
 						equals(IntrusionAlarmControl.VALUE_ARMED))
 				{
-				System.out.println("Alarming " + values.get(IntrusionAlarmControl.KEY_TYPE) 
-						+ ": " + sensors);
+				System.out.println("System Alarm -- Sensor Type: " + values.get(IntrusionAlarmControl.KEY_TYPE) 
+						+ ", Sensor ID: " + sensors);
 				}
 				else if(values.get(IntrusionAlarmControl.KEY_STATUS).
 						equals(IntrusionAlarmControl.VALUE_CLEARED)) {
-					System.out.println("Cleared " + values.get(IntrusionAlarmControl.KEY_TYPE) 
-							+ ": " + sensors);	
+					System.out.println("Cleared System Alarm -- Sensor Type: " + values.get(IntrusionAlarmControl.KEY_TYPE) 
+							+ ", Sensor ID: " + sensors);	
 				}
 			}
 		}
