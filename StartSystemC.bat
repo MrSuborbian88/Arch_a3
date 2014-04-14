@@ -30,4 +30,4 @@ START "SPRINKLER CONTROLLER" /MIN /NORMAL java edu.cmu.a3.SystemB.SprinklerContr
 START "FIRE CONSOLE" /MIN /NORMAL java edu.cmu.a3.SystemB.FireConsole %1
 
 REM System C Components:
-START "DEVICE MONITOR" /MIN /NORMAL java edu.cmu.a3.SystemC.DevicesMonitor %1
+START "DEVICE MONITOR" /MIN /NORMAL java edu.cmu.a3.SystemC.ServiceMaintenanceConsole %1
