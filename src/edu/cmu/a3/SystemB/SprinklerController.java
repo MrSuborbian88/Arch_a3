@@ -58,7 +58,6 @@ public class SprinklerController extends ADevice {
 
 		//arm/clear the system
 		if(msg.GetMessageId() == MessageCodes.FIRE_SYSTEM_ALARM) {
-			/*TODO - if fire system alarm determined to be on, turn sprinklers on*/
 			if(values.containsKey(FireAlarmController.KEY_STATUS)) {
 				if(values.get(FireAlarmController.KEY_STATUS).equals(FireAlarmController.VALUE_ARMED)) {
 					startCountdown(values.get(KEY_ID));
@@ -80,7 +79,6 @@ public class SprinklerController extends ADevice {
 		}
 
 		else if(msg.GetMessageId() == MessageCodes.COUNTDOWN_RESPONSE) {
-			/*TODO - if there is no input from user within 10 seconds, turn sprinklers on*/
 			if(values.containsKey(KEY_COUNTDOWN_RESPONSE) && values.containsKey(KEY_COUNTDOWN_ID)) {
 				if(values.get(KEY_COUNTDOWN_RESPONSE).equals(VALUE_COUNTDOWN_YES)) {
 					System.out.println("Received a response to the countdown to turn sprinklers on" 
@@ -98,7 +96,6 @@ public class SprinklerController extends ADevice {
 		}
 		else if(msg.GetMessageId() == MessageCodes.SET_SPRINKLER) {
 			if(values.containsKey(KEY_STATUS)) {
-				/*TODO - set sprinkler to TRUE when sprinklers already on*/
 				if(values.get(KEY_STATUS).equals(VALUE_ON))
 				{
 					if(!sprinkling) {

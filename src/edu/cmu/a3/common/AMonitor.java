@@ -103,7 +103,6 @@ public abstract class AMonitor extends ADevice {
 			if(newDevice)
 				deviceChange();
 		}
-//		System.out.println("Connected Devices " + connectedDevices.size());
 
 	}
 

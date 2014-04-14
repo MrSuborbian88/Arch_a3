@@ -45,7 +45,6 @@ public class IntrusionAlarmControl extends ADevice {
 		if(msg == null)
 			return;
 		Map<String,String> values = getMapFromString(msg.GetMessage());
-//		System.out.println(Arrays.toString(values.values().toArray()));
 
 		//arm/clear the system
 		if(msg.GetMessageId() == MessageCodes.ARM) {
@@ -59,8 +58,8 @@ public class IntrusionAlarmControl extends ADevice {
 					System.out.println("System is now disarmed.");
 				}
 				
-				// START CFP FIX FOR ISSUE 6
-				/if(this.armed)
+                                
+				if(this.armed)
 				{
 					for(String type : this.getDeviceTypes())
 					{
@@ -73,7 +72,6 @@ public class IntrusionAlarmControl extends ADevice {
 						}						
 					}
 				} 
-				// END CFP FIX FOR ISSUE 6
 				
 			}
 		}
@@ -144,9 +142,6 @@ public class IntrusionAlarmControl extends ADevice {
 					Arrays.toString(clear_ids.toArray(new String[armed_ids.size()])));
 			sendMessage(MessageCodes.SYSTEM_ALARM,values);
 			System.out.println("All "+type+" are inactive.");
-//			for(String id : clear_ids) {
-//				System.out.println(id);
-//			}
 		}
 
 	}

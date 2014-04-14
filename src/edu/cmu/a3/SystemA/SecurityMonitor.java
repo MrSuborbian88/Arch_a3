@@ -26,23 +26,13 @@ public class SecurityMonitor extends AMonitor {
 
 	public static String KEY_ARM = "arm";
 
-
-	
 	
 	@Override
 	protected void handleMessage(Message msg) {
 		Map<String,String> values = getMapFromString(msg.GetMessage());
 
-		//		System.out.println(Arrays.toString(values.keySet().toArray()));
-//		System.out.println(Arrays.toString(values.values().toArray()));
 		
 		if(msg.GetMessageId() == MessageCodes.SYSTEM_ALARM) {
-			/*"{
-		    Status: ""ALARM"",
-		    Type: ""WINDOW"",
-		    SensorIDs: [""WINDOW_1"", ""WINDOW_2"", ""WINDOW_4""]
-		}"" +
-		    */
 			if(values.containsKey(IntrusionAlarmControl.KEY_STATUS) && 
 					values.containsKey(IntrusionAlarmControl.KEY_SENSORIDS) &&
 					values.containsKey(IntrusionAlarmControl.KEY_TYPE)) {
