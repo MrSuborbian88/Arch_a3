@@ -3,8 +3,8 @@ package edu.cmu.a3.common;
 public interface MessageCodes {
 
 	public static final int ARM = 100;
-	public static final int SYSTEM_ALARM = 101;
-	public static final int SENSOR_ALARM = 102;
+	public static final int INTRUSION_SYSTEM_ALARM = 101;
+	public static final int INTRUSION_SENSOR_ALARM = 102;
 	
 	public static final int FIRE_SYSTEM_ALARM = 201;
 	public static final int FIRE_SENSOR_ALARM = 202;

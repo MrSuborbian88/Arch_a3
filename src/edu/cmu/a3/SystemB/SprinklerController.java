@@ -14,8 +14,8 @@ public class SprinklerController extends ADevice {
 	public static final String VALUE_ARMED = "armed";
 	public static final String VALUE_CLEARED = "clear";
 
-	public static final String VALUE_ON = "off";
-	public static final String VALUE_OFF = "on";
+	public static final String VALUE_ON = "on";
+	public static final String VALUE_OFF = "off";
 
 
 	public static final String KEY_STATUS = "status";
@@ -25,8 +25,8 @@ public class SprinklerController extends ADevice {
 	public static final String KEY_COUNTDOWN_ID = "response";
 	public static final String KEY_COUNTDOWN_TIME = "secondsleft";
 
-	public static final String VALUE_COUNTDOWN_YES = "start";
-	public static final String VALUE_COUNTDOWN_NO = "cancel";
+	public static final String VALUE_COUNTDOWN_CONFIRM = "start";
+	public static final String VALUE_COUNTDOWN_CANCEL = "cancel";
 
 	protected static final Integer [] msg_ids = {MessageCodes.FIRE_SYSTEM_ALARM,
 		MessageCodes.COUNTDOWN_RESPONSE,
@@ -80,13 +80,13 @@ public class SprinklerController extends ADevice {
 
 		else if(msg.GetMessageId() == MessageCodes.COUNTDOWN_RESPONSE) {
 			if(values.containsKey(KEY_COUNTDOWN_RESPONSE) && values.containsKey(KEY_COUNTDOWN_ID)) {
-				if(values.get(KEY_COUNTDOWN_RESPONSE).equals(VALUE_COUNTDOWN_YES)) {
+				if(values.get(KEY_COUNTDOWN_RESPONSE).equals(VALUE_COUNTDOWN_CONFIRM)) {
 					System.out.println("Received a response to the countdown to turn sprinklers on" 
 							+ values.get(KEY_COUNTDOWN_ID));
 					this.stopCountdown(values.get(KEY_COUNTDOWN_ID));
 					this.startSprinklers();
 				}
-				else if(values.get(KEY_COUNTDOWN_RESPONSE).equals(VALUE_COUNTDOWN_NO)) {
+				else if(values.get(KEY_COUNTDOWN_RESPONSE).equals(VALUE_COUNTDOWN_CANCEL)) {
 					//Stop countdown and start sprinklers
 					System.out.println("Received a response to the countdown to not turn sprinklers on" 
 							+ values.get(KEY_COUNTDOWN_ID));
@@ -107,7 +107,7 @@ public class SprinklerController extends ADevice {
 						System.out.println("Sprinklers are already on!");
 					}
 				}
-				if(values.get(KEY_STATUS).equals(VALUE_OFF)) 
+				if(values.get(KEY_STATUS).equals(VALUE_COUNTDOWN_CANCEL)) 
 				{
 					if(sprinkling) {
 						System.out.println("Turning off sprinklers!");
@@ -157,7 +157,7 @@ public class SprinklerController extends ADevice {
 		private int time = 10;
 		public void run() {
 			active = true;
-			while(active && time > 0) {
+			while(active && time >= 0) {
 				sendCountdownMessage(id,time);
 				try {
 					Thread.sleep(1000);
@@ -213,6 +213,7 @@ public class SprinklerController extends ADevice {
 		}
 		sendSprinklerStatus();
 	}
+	
 	private void sendSprinklerStatus() {
 		HashMap<String,String> values = new HashMap<String,String>();
 		values.put(KEY_STATUS, this.sprinkling ? VALUE_ON : VALUE_OFF);

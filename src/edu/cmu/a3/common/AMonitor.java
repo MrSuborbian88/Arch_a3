@@ -12,8 +12,6 @@ public abstract class AMonitor extends ADevice {
 	private Thread listener;
 	private Thread sender;
 
-	private boolean running;
-
 	public static final Long TIMEOUT = 60000L; //in ms
 
 

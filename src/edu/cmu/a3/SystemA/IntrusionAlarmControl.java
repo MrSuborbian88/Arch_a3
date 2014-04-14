@@ -15,13 +15,13 @@ public class IntrusionAlarmControl extends ADevice {
 
 	public static final String VALUE_TYPE = "IntrusionAlarmControl";
 	public static final String VALUE_DESCRIPTION = "Intrusion Alarm Control Description";
-	public static final String VALUE_ARMED = "armed";
+	public static final String VALUE_ALARM = "alarm";
 	public static final String VALUE_CLEARED = "clear";
 
 	public static final String KEY_STATUS = "status";
 	public static final String KEY_SENSORIDS = "sensorids";
 
-	protected static final Integer [] msg_ids = {MessageCodes.ARM,MessageCodes.SENSOR_ALARM};
+	protected static final Integer [] msg_ids = {MessageCodes.ARM,MessageCodes.INTRUSION_SENSOR_ALARM};
 
 	boolean armed = false;
 
@@ -75,7 +75,7 @@ public class IntrusionAlarmControl extends ADevice {
 				
 			}
 		}
-		else if(msg.GetMessageId() == MessageCodes.SENSOR_ALARM) {
+		else if(msg.GetMessageId() == MessageCodes.INTRUSION_SENSOR_ALARM) {
 			//add the stateful things to track sensor alarms
 			//			System.out.println(Arrays.toString(values.values().toArray()));
 			if(values.containsKey(ADevice.KEY_ID) && values.containsKey(ADevice.KEY_TYPE)
@@ -127,10 +127,10 @@ public class IntrusionAlarmControl extends ADevice {
 		values.put(KEY_TYPE, type);
 		if(armed_ids.size() > 0)
 		{
-			values.put(KEY_STATUS, VALUE_ARMED);
+			values.put(KEY_STATUS, VALUE_ALARM);
 			values.put(KEY_SENSORIDS,
 					Arrays.toString(armed_ids.toArray(new String[armed_ids.size()])));
-			sendMessage(MessageCodes.SYSTEM_ALARM,values);
+			sendMessage(MessageCodes.INTRUSION_SYSTEM_ALARM,values);
 			System.out.println("Active "+type+" :");
 			for(String id : armed_ids) {
 				System.out.println(id);
@@ -140,7 +140,7 @@ public class IntrusionAlarmControl extends ADevice {
 			values.put(KEY_STATUS, VALUE_CLEARED);
 			values.put(KEY_SENSORIDS,
 					Arrays.toString(clear_ids.toArray(new String[armed_ids.size()])));
-			sendMessage(MessageCodes.SYSTEM_ALARM,values);
+			sendMessage(MessageCodes.INTRUSION_SYSTEM_ALARM,values);
 			System.out.println("All "+type+" are inactive.");
 		}
 

@@ -30,7 +30,7 @@ public abstract class ADevice {
 	private MessageManagerInterface msgManager;
 	private Thread listener;
 
-	private boolean running;
+	protected boolean running;
 
 	public ADevice(String id, String type,String description, Integer [] relevant_ids) throws Exception {
 		this.msgManager = new MessageManagerInterface();
@@ -153,6 +153,9 @@ public abstract class ADevice {
 		listener.start();
 	}
 	
+	public void halt() {
+		running = false;
+	}
 	
 
 	protected static  Map<String,String> getMapFromString(String serializedObject) {
