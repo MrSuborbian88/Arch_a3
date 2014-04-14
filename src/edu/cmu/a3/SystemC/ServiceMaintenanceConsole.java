@@ -1,4 +1,4 @@
-package SystemC;
+package edu.cmu.a3.SystemC;
 
 import edu.cmu.a3.MessagePackage.Message;
 import edu.cmu.a3.common.AMonitor;
