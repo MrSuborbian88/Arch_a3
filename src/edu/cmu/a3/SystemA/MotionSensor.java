@@ -32,7 +32,7 @@ public class MotionSensor extends SecuritySensor {
 				System.out.println("Press Enter to Toggle Sensor On:");
 			edu.cmu.a3.common.Util.getNextEnter();
 			arm = !arm;
-			ds.sendArmMessage(arm);
+			ds.sendAlarmMessage(arm);
 			if(arm)
 				System.out.println("Sensor is on!");
 			else

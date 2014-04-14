@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -55,10 +56,11 @@ public class IntrusionAlarmControl extends ADevice {
 				} 
 				else {
 					armed = false;
+					sendClearForAllTypes();
 					System.out.println("System is now disarmed.");
 				}
-				
-                                
+
+
 				if(this.armed)
 				{
 					for(String type : this.getDeviceTypes())
@@ -72,12 +74,11 @@ public class IntrusionAlarmControl extends ADevice {
 						}						
 					}
 				} 
-				
+
 			}
 		}
 		else if(msg.GetMessageId() == MessageCodes.INTRUSION_SENSOR_ALARM) {
 			//add the stateful things to track sensor alarms
-			//			System.out.println(Arrays.toString(values.values().toArray()));
 			if(values.containsKey(ADevice.KEY_ID) && values.containsKey(ADevice.KEY_TYPE)
 					&& values.containsKey(SecuritySensor.KEY_STATUS))
 			{
@@ -89,7 +90,6 @@ public class IntrusionAlarmControl extends ADevice {
 								true : false
 						);
 				sensors.put(values.get(ADevice.KEY_ID), d);
-				if(this.armed)
 					try {
 						messageForAlarms(d.type);
 					} catch (NullPointerException e) {
@@ -130,7 +130,8 @@ public class IntrusionAlarmControl extends ADevice {
 			values.put(KEY_STATUS, VALUE_ALARM);
 			values.put(KEY_SENSORIDS,
 					Arrays.toString(armed_ids.toArray(new String[armed_ids.size()])));
-			sendMessage(MessageCodes.INTRUSION_SYSTEM_ALARM,values);
+			if(this.armed)
+				sendMessage(MessageCodes.INTRUSION_SYSTEM_ALARM,values);
 			System.out.println("Active "+type+" :");
 			for(String id : armed_ids) {
 				System.out.println(id);
@@ -139,12 +140,42 @@ public class IntrusionAlarmControl extends ADevice {
 		} else if (clear_ids.size() > 0) {
 			values.put(KEY_STATUS, VALUE_CLEARED);
 			values.put(KEY_SENSORIDS,
-					Arrays.toString(clear_ids.toArray(new String[armed_ids.size()])));
-			sendMessage(MessageCodes.INTRUSION_SYSTEM_ALARM,values);
+					Arrays.toString(clear_ids.toArray(new String[clear_ids.size()])));
+			if(this.armed)
+				sendMessage(MessageCodes.INTRUSION_SYSTEM_ALARM,values);
 			System.out.println("All "+type+" are inactive.");
+			//All clear, remove from list
+			if(sensors.containsKey(type))
+				sensors.remove(type);
 		}
 
 	}
+	
+	private void sendClearForAllTypes() {
+		HashMap<String,String> values = new HashMap<String,String>();
+		for(String type : sensors.keySet()) {
+			List<String> clear_ids = new ArrayList<String>();
+			for(Device d : sensors.values()) {
+				if(d.type.equals(type)) {
+					clear_ids.add(d.name);
+				}
+			}
+			values.put(KEY_TYPE, type);
+			values.put(KEY_STATUS, VALUE_CLEARED);
+			values.put(KEY_SENSORIDS,
+					Arrays.toString(clear_ids.toArray(new String[clear_ids.size()])));
+
+			try {
+				sendMessage(MessageCodes.INTRUSION_SYSTEM_ALARM,values);
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 	@Override
 	protected void handlePong(Message msg) {
 		//No action needed

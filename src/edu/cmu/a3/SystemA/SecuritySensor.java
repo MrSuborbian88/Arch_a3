@@ -31,7 +31,7 @@ public class SecuritySensor extends ADevice {
 	protected void handlePong(Message msg) {
 		//No action needed
 	}
-	public void sendArmMessage(boolean armed) throws NullPointerException, Exception {
+	public void sendAlarmMessage(boolean armed) throws NullPointerException, Exception {
 		Map<String,String> values = new HashMap<String,String>();
 		values.put(KEY_STATUS, armed ? VALUE_ARMED : VALUE_CLEARED);
 		sendMessage(MessageCodes.INTRUSION_SENSOR_ALARM, values);
