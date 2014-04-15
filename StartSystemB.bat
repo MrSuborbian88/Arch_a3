@@ -27,6 +27,5 @@ REM System B Components:
 START "FIRE SENSOR" /MIN /NORMAL java edu.cmu.a3.SystemB.FireSensor %1
 START "FIRE ALARM CONTOLLER" /MIN /NORMAL java edu.cmu.a3.SystemB.FireAlarmController %1
 START "SPRINKLER CONTROLLER" /MIN /NORMAL java edu.cmu.a3.SystemB.SprinklerController %1
-START "FIRE CONSOLE" /MIN /NORMAL java edu.cmu.a3.SystemB.FireConsole %1
 
 
