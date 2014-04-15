@@ -3,6 +3,12 @@ Arch_a3
 
 **Bolded** text indicates cmd commands.
 
+----------------- Set-Up ----------------- 
+To set up the system, in the root directory run the compile batch script:
+ 	
+**compile**
+ 	
+You should only need to run this once. 
 
 Running the Systems
 ---------------------------------- 
