@@ -233,7 +233,7 @@ public class SecurityMonitor extends AMonitor {
 		System.out.println("===========================================\n");
 		System.out.println( "Select an Option: \n" );
 		
-		if(armed) {
+		if(!armed) {
 			System.out.println( "1: Arm Instrusion Alarm System" );
 		} else {
 			System.out.println( "1: Disarm Intrusion Alarm System" );
