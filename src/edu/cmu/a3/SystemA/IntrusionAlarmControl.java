@@ -90,13 +90,13 @@ public class IntrusionAlarmControl extends ADevice {
 								true : false
 						);
 				sensors.put(values.get(ADevice.KEY_ID), d);
-					try {
-						messageForAlarms(d.type);
-					} catch (NullPointerException e) {
-						e.printStackTrace();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				try {
+					messageForAlarms(d.type);
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 		}	
@@ -144,13 +144,17 @@ public class IntrusionAlarmControl extends ADevice {
 			if(this.armed)
 				sendMessage(MessageCodes.INTRUSION_SYSTEM_ALARM,values);
 			System.out.println("All "+type+" are inactive.");
-			//All clear, remove from list
-			if(sensors.containsKey(type))
-				sensors.remove(type);
+			//All inactive, remove from tracking
+			for(Device d : sensors.values()) {
+				if(d.type.equals(type)) {
+					if(!d.state && sensors.containsKey(d.name)) 
+						sensors.remove(d.name);
+				}
+			}
 		}
 
 	}
-	
+
 	private void sendClearForAllTypes() {
 		HashMap<String,String> values = new HashMap<String,String>();
 		for(String type : sensors.keySet()) {
