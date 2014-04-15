@@ -38,6 +38,7 @@ Shutting Down the Systems
 To shut the system down, you can close all the windows individually. This is painful.
 You can also kill all the java processes on your machine through the command line:
 If you're okay with killing all java applications on your machine, run the following two commands:
+
 **taskkill /im java.exe**
 
 **taskkill /im rmiregistry.exe**
