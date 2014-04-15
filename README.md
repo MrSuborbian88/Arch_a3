@@ -40,7 +40,7 @@ You can also kill all the java processes on your machine through the command lin
 If you're okay with killing all java applications on your machine, run the following two commands:
 **taskkill /im java.exe**
 
-**taskkill /im rmiregister.exe**
+**taskkill /im rmiregistry.exe**
 
 Doing this is easier than closing all the windows, 
 but will require you to restart the event manager before starting up another system. 
