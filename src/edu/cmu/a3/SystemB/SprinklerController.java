@@ -91,6 +91,7 @@ public class SprinklerController extends ADevice {
 					System.out.println("Received a response to the countdown to not turn sprinklers on" 
 							+ values.get(KEY_COUNTDOWN_ID));
 					this.stopCountdown(values.get(KEY_COUNTDOWN_ID));
+					sendSprinklerStatus();
 				}
 			}
 		}
@@ -116,6 +117,7 @@ public class SprinklerController extends ADevice {
 					else
 					{
 						System.out.println("Sprinklers are already off!");
+						sendSprinklerStatus();
 					}
 				}
 
@@ -126,10 +128,12 @@ public class SprinklerController extends ADevice {
 	}
 	private void stopSprinklers() {
 		sprinkling = false;
+		sendSprinklerStatus();
 	}
 
 	private void startSprinklers() {
 		sprinkling = true;
+		sendSprinklerStatus();
 	}
 
 	private void startCountdown(String sensorId) {

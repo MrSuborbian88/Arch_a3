@@ -11,6 +11,9 @@ import edu.cmu.a3.TermioPackage.Termio;
 import edu.cmu.a3.common.AMonitor;
 import edu.cmu.a3.common.MessageCodes;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class SecurityMonitor extends AMonitor {
 	
 
@@ -23,6 +26,8 @@ public class SecurityMonitor extends AMonitor {
 	
 	private String countdownId;
 	private String countdownString;
+	private boolean countdownResponseSent;
+	private Lock countdownLock = new ReentrantLock();
 	
 	private boolean sprinkerSetOptionActive = false;
 	private boolean sprinklersOn = false;
@@ -110,19 +115,28 @@ public class SecurityMonitor extends AMonitor {
 	}
 	
 	private void handleCountdown(Map<String, String> values) {
-		countdownId = values.get(SprinklerController.KEY_COUNTDOWN_ID);
-		
-		if(values.containsKey(SprinklerController.KEY_COUNTDOWN_TIME)) {
+		try {
+			countdownLock.lock();
+			if(countdownId != values.get(SprinklerController.KEY_COUNTDOWN_ID)) {
+				countdownResponseSent = false;
+			}			
+			countdownId = values.get(SprinklerController.KEY_COUNTDOWN_ID);
 			
-			if(values.get(SprinklerController.KEY_COUNTDOWN_TIME).equals("0")) {
-				countdownString = null;
-			} else {
-				countdownString = "Sprinklers will go off in " + 
-						values.get(SprinklerController.KEY_COUNTDOWN_TIME) + " seconds.";	
-			}
-			
-			updateMonitor();			
+			if(!countdownResponseSent && values.containsKey(SprinklerController.KEY_COUNTDOWN_TIME)) {
+				
+				if(values.get(SprinklerController.KEY_COUNTDOWN_TIME).equals("0")) {
+					countdownString = null;
+				} else {
+					countdownString = "Sprinklers will go off in " + 
+							values.get(SprinklerController.KEY_COUNTDOWN_TIME) + " seconds.";	
+				}
+				
+				updateMonitor();			
+			}			
+		} finally {
+			countdownLock.unlock();
 		}
+		
 	}
 	
 	private void handleSprinklerStatus(Map<String, String> values) {
@@ -166,23 +180,32 @@ public class SecurityMonitor extends AMonitor {
 	}
 	
 	public void sendCountdownResponse(boolean confirm) {
-		HashMap<String,String> values = new HashMap<String,String>();
-		
-		values.put(SprinklerController.KEY_COUNTDOWN_ID, countdownId);
-		
-		if(confirm) {
-			values.put(SprinklerController.KEY_COUNTDOWN_RESPONSE,SprinklerController.VALUE_COUNTDOWN_CONFIRM);
-		} else {
-			values.put(SprinklerController.KEY_COUNTDOWN_RESPONSE,SprinklerController.VALUE_COUNTDOWN_CANCEL);
-		}
-		
 		try {
-			sendMessage(MessageCodes.COUNTDOWN_RESPONSE,values);
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+			countdownLock.lock();
+			HashMap<String,String> values = new HashMap<String,String>();
+			
+			values.put(SprinklerController.KEY_COUNTDOWN_ID, countdownId);
+			
+			if(confirm) {
+				values.put(SprinklerController.KEY_COUNTDOWN_RESPONSE,SprinklerController.VALUE_COUNTDOWN_CONFIRM);
+			} else {
+				values.put(SprinklerController.KEY_COUNTDOWN_RESPONSE,SprinklerController.VALUE_COUNTDOWN_CANCEL);
+			}
+			
+			try {
+				sendMessage(MessageCodes.COUNTDOWN_RESPONSE,values);
+				countdownString = null;
+				countdownResponseSent = true;
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}finally {
+			countdownLock.unlock();
+		
 		}
+		
 	}
 
 	
