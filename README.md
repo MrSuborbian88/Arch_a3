@@ -26,7 +26,7 @@ To run system B:
 >> StartSystemB
 
 To run system C:
->> StartSystem C
+>> StartSystemC
 
 ----------------- Shutting Down the Systems ----------------- 
 To shut the system down, you can close all the windows individually. This is painful.
