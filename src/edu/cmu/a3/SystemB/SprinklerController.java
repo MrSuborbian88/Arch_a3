@@ -22,7 +22,7 @@ public class SprinklerController extends ADevice {
 	public static final String KEY_SENSORIDS = "sensorids";
 
 	public static final String KEY_COUNTDOWN_RESPONSE = "response";
-	public static final String KEY_COUNTDOWN_ID = "response";
+	public static final String KEY_COUNTDOWN_ID = "countdownid";
 	public static final String KEY_COUNTDOWN_TIME = "secondsleft";
 
 	public static final String VALUE_COUNTDOWN_CONFIRM = "start";
