@@ -1,1 +1,2 @@
-javac  -d bin -sourcepath src src\edu\cmu\a3\*.java
+mkdir bin
+javac  -d bin -sourcepath src src\edu\cmu\a3\*.java src\edu\cmu\a3\common\*.java src\edu\cmu\a3\InstrumentationPackage\*.java src\edu\cmu\a3\MessagePackage\*.java src\edu\cmu\a3\SystemA\*.java src\edu\cmu\a3\SystemB\*.java src\edu\cmu\a3\SystemC\*.java src\edu\cmu\a3\TermioPackage\*.java 
