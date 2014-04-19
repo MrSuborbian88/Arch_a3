@@ -163,7 +163,7 @@ public abstract class ADevice {
 
 		// deserialize the object
 		try {
-			byte b[] = serializedObject.getBytes(); 
+			byte b[] = serializedObject.getBytes("ISO-8859-1"); 
 			ByteArrayInputStream bi = new ByteArrayInputStream(b);
 			ObjectInputStream si = new ObjectInputStream(bi);
 			deserializedObject = (Map<String,String>) si.readObject();
@@ -183,7 +183,7 @@ public abstract class ADevice {
 			ObjectOutputStream so = new ObjectOutputStream(bo);
 			so.writeObject(map);
 			so.flush();
-			serializedObject = bo.toString();
+			serializedObject = bo.toString("ISO-8859-1");
 		} catch (Exception e) {
 			System.out.println(e);
 			System.exit(1);
